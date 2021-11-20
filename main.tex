@@ -13,13 +13,13 @@
 \usepackage{tikz-cd}
 \usepackage{fullpage}
 \theoremstyle{plain}
-\newtheorem{thm}{Theorem}
-\newtheorem{lem}{Lemma}[thm]
-\newtheorem{dus}{Corollary}
-\newtheorem{pozo}{Observation}
-\newtheorem{fact}{Fact}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{dus}[thm]{Corollary}
+\newtheorem{pozo}[thm]{Observation}
+\newtheorem{fact}[thm]{Fact}
 \theoremstyle{definition}
-\newtheorem{defn}{Definition}
+\newtheorem{defn}[thm]{Definition}
 \newtheorem{axm}[thm]{Axiom}
 \newtheorem{pozn}[thm]{Note}
 \newtheorem{znac}[thm]{Značení}
@@ -74,7 +74,6 @@
 \newcommand{\poly}{\operatorname{poly}}
 \newcommand{\polylog}{\operatorname{polylog}}
 
-
 \newcommand\cuseq[1]{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily #1}}}{=}}}
 \newcommand\cusar[1]{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily #1}}}{\longrightarrow}}}
 \newcommand\logeq{{\mkern3mu\vDash\mkern-1mu\vline\mkern4mu}}
@@ -94,10 +93,60 @@
 
 \maketitle
 
+\section{Preliminaries}
+\begin{defn}
+	For number $n\in\mathbb{N}$, denote $[n]:=\{1,\ldots, n\}$.
+\end{defn}
+\begin{defn}
+	Let $A$ be an event and $B_1,\ldots, B_m$ collection of events. We say that $A$ is \textit{mutually independent of events $B_1,\ldots, B_m$} if and only if for any $I\subseteq [m]$
+	$$
+	\Pr\bigg[A\bigg| \bigcap_{i\in I}B_i\bigg]=\Pr[A].
+	$$
+\end{defn}
+
+\begin{lem}
+	If event $A$ is mutually independent of events $B_1,\ldots, B_m$, then for each $I\subseteq [m]$ 
+	$$
+	\Pr\bigg[A\bigg| \bigcap_{i\in I}\overline{B_i}\bigg]=\Pr[A].
+	$$
+\end{lem}
+\begin{proof}
+	By the Bayes theorem we have
+	$$
+		\Pr[A]=\Pr\bigg[A\bigg | \bigcap_{i\in I} \overline{B_i}\bigg]\cdot \Pr\bigg[\bigcap_{i\in I} \overline{B_i}\bigg]+\Pr\bigg[A\bigg | \overline{\bigcap_{i\in I} \overline{B_i}}\bigg]\cdot \Pr\bigg[\overline{\bigcap_{i\in I} \overline{B_i}}\bigg]
+	$$
+	The second term becomes
+	\begin{align*}
+	\Pr\bigg[A\bigg | \overline{\bigcap_{i\in I} \overline{B_i}}\bigg]\cdot \Pr\bigg[\overline{\bigcap_{i\in I} \overline{B_i}}\bigg] &= \Pr\bigg[A\bigg | \bigcup_{i\in I}B_i\bigg]\cdot \Pr\bigg[\bigcup_{i\in I} B_i\bigg] =\\&= \Pr\bigg[A\cap \bigcup_{i\in I}B_i\bigg]=\\&=\Pr\bigg[ \bigcup_{i\in I}\bigg(A\cap B_i\bigg)\bigg]=\\&=\sum_{\emptyset \neq S \subseteq I}(-1)^{|S|+1}\Pr\bigg[\bigcap_{i\in S}\bigg(A\cap B_i\bigg)\bigg]=\\&=\sum_{\emptyset \neq S \subseteq I}(-1)^{|S|+1}\Pr\bigg[A\bigg |\bigcap_{i\in S}B_i\bigg]\cdot \Pr\bigg[\bigcap_{i\in S}B_i\bigg]=\\&=\Pr[A]\cdot\sum_{\emptyset \neq S \subseteq I}(-1)^{|S|+1} \Pr\bigg[\bigcap_{i\in S}B_i\bigg]=\\&=\Pr[A]\cdot \Pr\bigg[\bigcup_{i\in I}B_i\bigg]=\\&=\Pr[A]\cdot \bigg(1-\Pr\bigg[\bigcap_{i\in I} \overline{B_i}\bigg]\bigg)
+	\end{align*}
+	Now, it is straightforward to manipulate the expression to get the result.
+\end{proof}
+
+\begin{thm}[Markov's inequality]
+	Let $T$ be a nonengative random variable, then for any $a > 0$
+	$$
+	\Pr[T\geq a]\leq\frac{E[T]}{a}	
+	$$
+\end{thm}
+\begin{proof}
+	Let $A$ be the event $A=\{T\geq a\}$ and let $\chi_A$ be an indicator of the event $A$. Then, $T\geq a\cdot \chi_A$ certainly holds. Applying expectation to both sides yields
+	$$
+	E[T]\geq a E(\chi_A)=a\Pr[A]=a\Pr[T\geq a]
+	$$
+	and the result follows.
+\end{proof}
+
+
 \section{Probabilistic method}
 
 \begin{defn}
-	For tournament $T=(V,E)$ define the property $p_k$ as follows. $T$ has a property $p_k$ if for each subset $S$ of size $k$ there is a vertex $p_S\notin S$ s.t. $(p_S,w)\in E$ for all $w\in S$ (we call such vertex a beater for $S$). 
+	\textit{Tournament} is an oriented graph s.t. for every pair of distinct vertices $u,v$ there is exactly one oriented edge.
+\end{defn}
+
+In other words, Tournament is a clique in which every edge received an orientaiton.
+
+\begin{defn}
+	Let $k\in\mathbb{N}$. For tournament $T=(V,E)$ define the property $p_k$ as follows. $T$ has a property $p_k$ if and only if for each subset $S\subseteq V$ of size $k$ there is a vertex $p_S\notin S$ s.t. $(p_S,w)\in E$ for all $w\in S$ (we call such vertex a beater for $S$). 
 \end{defn}
 
 \begin{thm}
@@ -108,15 +157,15 @@
 	If $n^k(1-2^{-k})^{n-k} < 1$, then there exists $n$-vertex tournament with the property $p_k$.
 \end{lem}
 \begin{proof}
-	Let $T$ be random tournament on $n$ in following sense. Fix $n$ vertices and for each pair $u,v$ flip a fair coin and either orient the edge from $u$ to $v$ or vice versa. Let $S\subseteq V$ be a set of size $k$. Probability that a vertex outside of $S$ is a beater for $S$ is $2^{-k}$. Thus the probability that a vertex is not a beater is $1-2^{-k}$. There are $n-k$ independent such vertices, thus the probability that $S$ violates the property $p_S$ is $(1-2^{-k})^{n-k}$. Let $W_S$ denote the event that $S$ does not have a beater. Then $P(\exists S: W_S) = P(\bigcup_{S\subseteq V,|S|=k}W_S)\leq \sum P(W_S) = {n \choose k}(1-2^{-k})^{n-k}\leq n^k(1-2^{-k})^{n-k}$ which is $<1$ by assumption. So the probability of existence of such set is less than one. Thus the probability that in random tournament no such $S$ will exists is nonzero, so some tournament must satisfy the property $p_k$.
+	Let $T$ be a random $n$-vertex tournament on in following sense. Fix $n$ vertices and for each pair $u,v$ flip a fair coin and either orient the edge from $u$ to $v$ or vice versa. Let $S\subseteq V$ be a set of size $k$. Probability that a vertex outside of $S$ is a beater for $S$ is $2^{-k}$. Thus the probability that a vertex is not a beater is $1-2^{-k}$. There are $n-k$ independent such vertices, thus the probability that $S$ violates the property $p_k$ is $(1-2^{-k})^{n-k}$. Let $W_S$ denote the event that $S$ does not have a beater. The fact that random $T$ does not satisfy property $p_k$ means that there is some $S$ s.t. $W_S$ occured. We have $$P(\exists S: W_S) = \Pr\bigg[\bigcup_{\substack{S\subseteq V\\|S|=k}}W_S\bigg]\leq \sum_{\substack{S\subseteq V\\|S|=k}} \Pr[W_S] = {n \choose k}(1-2^{-k})^{n-k}\leq n^k(1-2^{-k})^{n-k}$$ which is $<1$ by assumption. So, random tournament does not have the property $p_k$ with probability strictly less than $1$. In other words random tournament does have the property $p_k$ with nonzero probability. In particular, one such tournament must exist.
 \end{proof}
 
 \begin{proof}[Proof of the Theorem]
-	It suffices to show that for each $k$ there is $n:=f(k)+k$ s.t. it satisfies $n^k(1-2^{-k})^{n-k}$. Instead, let's solve
+	It now suffices to show that for each $k$ there is $n:=f(k)+k$ s.t. it satisfies $n^k(1-2^{-k})^{n-k}$. Instead, let's solve relaxed version:
 	$$
 	n^ke^{-2^{-k}(n-k)}<1
 	$$
-	by inequality $1-x\leq e^{-x}$. Taking logarithm of both sides, this can be rewritten to
+	which suffices by the inequality $1-x\leq e^{-x}$ valid for all real $x$. Taking logarithm of both sides, this can be rewritten to
 	$$
 	k\log n < 2^{-k}(n-k)
 	$$
@@ -218,7 +267,7 @@ There are two types of randomized algorithms. \textit{Las-Vegas} is a type of ra
 
 In \textit{Monte-Carlo} algorithm, we allow the algorithm to produce a wrong answer but we bound the probability that this happens.
 
-Every Las-Vegas algorithm $A$ with expected running time $T(n)$ can be turned into following Monte-Carlo algorithm. Run $A$ for $cT(n)$ steps and then stop it and if it didnt finish, output something random (maybe $42$) or the result of $A$ if it did. Then probability that $A$ runs for more than $cT(n)$ steps is at most $1/c$ by Markov inequality which says for nonnegative random variable $T$
+Every Las-Vegas algorithm $A$ with expected running time $T(n)$ can be turned into following Monte-Carlo algorithm. Run $A$ for $cT(n)$ steps and then stop it and if it didn't finish, output something random (maybe $42$) or the result of $A$ if it did. Then probability that $A$ runs for more than $cT(n)$ steps is at most $1/c$ by Markov inequality which says for nonnegative random variable $T$
 $$
 P(T\geq a)\leq \frac{E(T)}{a}
 $$
